@@ -5,6 +5,7 @@ A robust backend service for a Resume Analyzer application, featuring a secure a
 ## 🚀 Features
 
 - **User Authentication**: Secure registration and login system.
+- **Auth Middleware**: Custom middleware to protect routes and verify JWT sessions.
 - **Password Security**: Uses `bcryptjs` for salt-hashing passwords.
 - **JWT Implementation**: Generates JSON Web Tokens for session management.
 - **Secure Logout**: Implements a blacklisting system to invalidate tokens upon logout.
@@ -27,6 +28,7 @@ A robust backend service for a Resume Analyzer application, featuring a secure a
 | POST | `/api/auth/register` | Register a new user | Public |
 | POST | `/api/auth/login` | Login and receive a cookie token | Public |
 | GET | `/api/auth/logout` | Logout and blacklist the token | Public |
+| GET | `/api/auth/get-me` | Get current logged-in user profile | Private (Token Required) |
 
 ## ⚙️ Setup Instructions
 
@@ -63,6 +65,7 @@ A robust backend service for a Resume Analyzer application, featuring a secure a
 ├── src/
 │   ├── config/          # Database configuration
 │   ├── controllers/     # Business logic for routes
+│   ├── middlewares/     # Authentication and validation middleware
 │   ├── models/          # Mongoose schemas (User, Blacklist)
 │   ├── routes/          # API route definitions
 │   └── app.js           # Express app setup
