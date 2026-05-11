@@ -1,0 +1,41 @@
+
+@mixin flex-col($gap: 0rem){
+    display: flex;
+    flex-direction: column;
+    gap: $gap;
+}
+
+main{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .form-container{
+        min-width: 350px;
+        @include flex-col(1rem);
+    }
+    form{
+        @include flex-col(0.75rem);
+    }
+
+    .input-group{
+        width: 100%;
+        @include flex-col(0.5rem);
+        input {
+            outline: none;  
+            border: none;
+            padding-block: 0.75rem;
+            padding-inline: 1rem;
+            border-radius: 0.75rem;
+        }
+    }
+
+    a{
+        text-decoration: none;
+        color: #0044f0;
+    }
+    p{
+        font-size: 0.9rem;
+    }
+}

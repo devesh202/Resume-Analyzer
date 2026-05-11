@@ -1,0 +1,21 @@
+.button{
+    border:none;
+    outline:none;
+    padding-block:0.75rem;
+    padding-inline:1.5rem;
+    border-radius:1rem;
+    cursor:pointer;
+    color:white;
+
+    &.primary-button{   
+        background-color:#0044f0;
+        font-weight:500;
+    }
+    &.primary-button:hover{
+        background-color:#0047f7;
+    }
+    &:active{
+        scale: 0.95;
+    }
+    
+}
