@@ -1,0 +1,17 @@
+4 layers Architecture
+    
+    UI
+    =>components
+    =>Pages
+   
+   Hook 
+   =>hooks
+
+   State
+   =>auth.context.jsx
+   =>ai.context.jsx
+
+  API
+  =>services
+   =>auth.api
+   

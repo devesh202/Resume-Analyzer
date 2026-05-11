@@ -1,5 +1,7 @@
 # Resume Analyzer Backend
 
+Part of the [Resume Analyzer](../README.md) project.
+
 A robust backend service for a Resume Analyzer application, featuring a secure authentication system with JWT, password hashing, and token blacklisting for logout functionality.
 
 ## 🚀 Features

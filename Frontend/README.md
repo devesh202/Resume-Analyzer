@@ -1,16 +1,55 @@
-# React + Vite
+# Resume Analyzer - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend of the Resume Analyzer application, built with **React**, **Vite**, and **SCSS**.
 
-Currently, two official plugins are available:
+## 🏗️ 4-Layer Architecture
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The application follows a structured 4-layer approach for organized development:
 
-## React Compiler
+### 1. UI Layer (`src/components`, `src/features/**/pages`)
+Contains all the visual components and page layouts.
+- **Components**: Reusable UI blocks like buttons, inputs, cards.
+- **Pages**: Higher-level components that represent full routes (e.g., Login, Register).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Hook Layer (`src/hooks`)
+Contains custom React hooks that encapsulate complex logic and stateful behavior that can be shared across multiple components.
 
-## Expanding the ESLint configuration
+### 3. State Layer (`src/context`)
+Managed using React Context API for global state management.
+- `auth.context.jsx`: Handles user authentication state, tokens, and profile data.
+- `ai.context.jsx`: Handles the state of resume analysis and AI interactions.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 4. API Layer (`src/services`)
+Handles all external communication. It contains service functions for fetching data from the backend API, keeping the UI components clean of network logic.
+
+## 🚀 Getting Started
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Run development server**:
+   ```bash
+   npm run dev
+   ```
+
+3. **Build for production**:
+   ```bash
+   npm run build
+   ```
+
+## 🎨 Styling
+
+We use **SCSS** with a modular approach.
+- Global styles are in `src/style.scss`.
+- Component-specific styles are located alongside their respective components (e.g., `src/features/auth/auth.form.scss`).
+- Design tokens and variables are maintained in `src/style/`.
+
+## 🛠️ Features Implemented
+- [x] User Registration UI
+- [x] User Login UI
+- [x] Responsive Design
+- [x] 4-Layer Architectural Setup
+- [ ] Resume Upload Integration
+- [ ] AI Analysis Dashboard
