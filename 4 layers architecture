@@ -4,14 +4,14 @@
     =>components
     =>Pages
    
-   Hook 
+   Hook => for managing state and api layer
    =>hooks
 
-   State
+   State =>data store
    =>auth.context.jsx
    =>ai.context.jsx
 
-  API
+  API=>communication with backend
   =>services
-   =>auth.api
+   =>auth.api.js
    

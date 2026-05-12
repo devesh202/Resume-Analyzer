@@ -47,9 +47,11 @@ We use **SCSS** with a modular approach.
 - Design tokens and variables are maintained in `src/style/`.
 
 ## 🛠️ Features Implemented
-- [x] User Registration UI
-- [x] User Login UI
+- [x] User Registration UI & Logic
+- [x] User Login UI & Logic
 - [x] Responsive Design
 - [x] 4-Layer Architectural Setup
+- [x] Protected Routing for authenticated users
+- [x] Automatic session restoration on mount
 - [ ] Resume Upload Integration
 - [ ] AI Analysis Dashboard

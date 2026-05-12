@@ -38,6 +38,12 @@ The Frontend follows a **4-Layer Architecture** for better scalability and maint
 4. **API Layer**:
    - `services`: API calls and external data fetching.
 
+## 🔐 Authentication Flow
+
+- **Protected Routes**: Implemented using a `Protected` component that checks for an active user session before granting access to specific pages.
+- **Auto-Login**: The `AuthProvider` performs an automatic "get me" check on initial load to restore previous sessions.
+- **Error Handling**: Comprehensive error handling in the API layer and hooks to provide a smooth user experience.
+
 ---
 
 ## 🚀 Getting Started
