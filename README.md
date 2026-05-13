@@ -44,6 +44,11 @@ The Frontend follows a **4-Layer Architecture** for better scalability and maint
 - **Auto-Login**: The `AuthProvider` performs an automatic "get me" check on initial load to restore previous sessions.
 - **Error Handling**: Comprehensive error handling in the API layer and hooks to provide a smooth user experience.
 
+## 🤖 AI Integration
+
+- **Gemini AI**: Integrated Google's Gemini AI to analyze resumes against job descriptions and generate preparation reports.
+- **Interview Report Model**: A detailed schema to store match scores, technical/behavioral questions, skill gaps, and custom preparation plans.
+
 ---
 
 ## 🚀 Getting Started
