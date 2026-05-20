@@ -130,6 +130,10 @@ const interviewReportSchema = new mongoose.Schema({
     preparationPlan:{
         type:[preparationTaskSchema],
        
+    },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
     }
    
 },{timestamps:true }) 

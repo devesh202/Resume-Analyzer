@@ -3,10 +3,10 @@ const {resume, jobDescription, selfDescription} = require('./src/services/sample
 require('dotenv').config()
 console.log(process.env.MONGO_URI)
 const connectToDB = require('./src/config/database')
-const generateInterviewReport = require('./src/services/ai.services')
+// const generateInterviewReport = require('./src/services/ai.services')
 connectToDB()
 
-generateInterviewReport({resume, jobDescription, selfDescription})
+// generateInterviewReport({resume, jobDescription, selfDescription})
 
 app.listen(3000,()=>{
     console.log("Server running on port 3000")

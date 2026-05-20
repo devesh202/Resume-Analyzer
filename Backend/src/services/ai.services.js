@@ -230,7 +230,6 @@ ${jobDescription}
       return null;
     }
 
-    console.log(JSON.stringify(validated.data, null, 2));
 
     return validated.data;
 

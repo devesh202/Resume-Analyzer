@@ -16,6 +16,8 @@ The project is divided into two main parts:
 - **MongoDB** & **Mongoose**
 - **JWT** (JSON Web Tokens) for authentication
 - **Bcrypt.js** for secure password hashing
+- **Multer** for file uploads
+- **pdf-parse** for extracting text from resume PDFs
 
 ### Frontend
 - **React** (Vite)
@@ -47,6 +49,7 @@ The Frontend follows a **4-Layer Architecture** for better scalability and maint
 ## 🤖 AI Integration
 
 - **Gemini AI**: Integrated Google's Gemini AI to analyze resumes against job descriptions and generate preparation reports.
+- **Resume Parsing**: Built-in support for uploading PDF resumes using `multer` and extracting content with `pdf-parse` to feed directly into the AI pipeline.
 - **Structured JSON Output**: Uses advanced schema enforcement to ensure the AI always returns valid, parseable JSON.
 - **Zod Validation**: All AI responses are validated using Zod schemas to ensure data integrity and type safety.
 - **Interview Report Model**: A detailed schema to store match scores, technical/behavioral questions, skill gaps, and custom preparation plans.
