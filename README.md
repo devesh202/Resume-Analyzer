@@ -68,7 +68,7 @@ The Frontend follows a **4-Layer Architecture** for better scalability and maint
    ```bash
    cd Backend
    npm install
-   # Create .env file with MONGO_URI and JWT_SECRET
+   # Create .env file with MONGO_URI, JWT_SECRET, and GEMINI_API_KEY
    npm run dev
    ```
 

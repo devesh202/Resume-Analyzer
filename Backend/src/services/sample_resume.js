@@ -70,4 +70,4 @@ I am a proactive developer with a strong foundation in React and the MERN stack.
 Although my professional experience is 3 years, I have taken lead roles in my previous projects, managed small teams, and am ready to step into a Senior role to contribute to architecture and performance at scale.
 `;
 
-module.exports = { resume, jobDescription, selfDescription };
+// module.exports = { resume, jobDescription, selfDescription };
