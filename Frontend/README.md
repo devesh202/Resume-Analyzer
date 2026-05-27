@@ -42,16 +42,16 @@ Handles all external communication. It contains service functions for fetching d
 ## 🎨 Styling
 
 We use **SCSS** with a modular approach.
-- Global styles are in `src/style.scss`.
-- Component-specific styles are located alongside their respective components (e.g., `src/features/auth/auth.form.scss`).
-- Design tokens and variables are maintained in `src/style/`.
+- Global styles are in `src/style.scss` (includes global animations and the custom profile load screens).
+- Feature-specific styles are located in scoped stylesheets alongside their respective page modules (e.g., `src/features/interview/style/home.scss`, `src/features/auth/auth.form.scss`).
+- Design tokens and buttons are managed in `src/style/`.
 
 ## 🛠️ Features Implemented
 - [x] User Registration UI & Logic
 - [x] User Login UI & Logic
-- [x] Responsive Design
+- [x] Responsive Design & Layouts
 - [x] 4-Layer Architectural Setup
-- [x] Protected Routing for authenticated users
+- [x] Protected Routing (Declarative Session Protection)
 - [x] Automatic session restoration on mount
-- [ ] Resume Upload Integration
-- [ ] AI Analysis Dashboard
+- [x] Interactive Resume Upload Integration UI
+- [x] Premium Dark Mode AI Analysis Dashboard UI
