@@ -37,8 +37,9 @@ const interviewReportSchema = z.object({
       day: z.number(),
       focus: z.string(),
       tasks: z.array(z.string()),
-    })
+    }),
   ),
+  title: z.string().describe("Title of the job for which the interview is being conducted"),
 });
 
 async function generateInterviewReport({

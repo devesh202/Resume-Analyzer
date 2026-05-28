@@ -29,4 +29,23 @@ async function generateInterviewReportController(req,res){
         
     }
 }
-module.exports = {generateInterviewReportController}
+
+async function getInterviewReportByIdController(req,res){
+    const interviewId = req.params.interviewId
+    const interviewReport = await interviewReportModel.findById(interviewId)
+    res.status(200).json({
+        success:true,
+        message:"Interview report fetched successfully",
+        data:interviewReport
+    })
+}
+
+async function getAllInterviewReportsController(req,res){
+    const interviewReports = await interviewReportModel.find({user:req.user.id}).sort({createdAt:-1}).select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan")
+    res.status(200).json({
+        success:true,
+        message:"Interview reports fetched successfully",
+        data:interviewReports
+    })
+}
+module.exports = {generateInterviewReportController,getInterviewReportByIdController,getAllInterviewReportsController}
