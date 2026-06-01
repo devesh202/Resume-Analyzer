@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
+import { useInterview } from '../hooks/useInterview';
 import "../style/home.scss";
+import Navbar from "../../auth/components/Navbar"
+import { useNavigate } from 'react-router';
 
 const Home = () => {
-    const [charCount, setCharCount] = useState(0);
+    const {generateReport,loading} = useInterview();
+    const [selfDescription,setSelfDescription] = useState("");
     const [jobDesc, setJobDesc] = useState("");
+    const resumeInputRef = useRef(null);
+    const navigate = useNavigate()
 
-    const handleJobDescChange = (e) => {
-        const text = e.target.value;
-        if (text.length <= 5000) {
-            setJobDesc(text);
-            setCharCount(text.length);
+    const handleSubmit = async () => {
+        const resumeFile = resumeInputRef.current.files[0];
+        const response = await generateReport({jobDesc,selfDescription,resumeFile});
+        if(response.success){
+            toast.success(response.message)
+            navigate(`/interview/result/${response.data._id}`)
+        }else{
+            toast.error(response.message)
         }
+        
     };
 
     return (
@@ -66,10 +76,10 @@ const Home = () => {
 
                             <div className="textarea-container">
                                 <textarea 
+                                    onChange={(e)=>setJobDesc(e.target.value)}
                                     name="jobDescription" 
                                     placeholder="Paste the full job description here...&#10;e.g., 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'"
                                     value={jobDesc}
-                                    onChange={handleJobDescChange}
                                     maxLength={5000}
                                 ></textarea>
                                 <span className="char-counter">{charCount} / 5000 chars</span>
@@ -102,7 +112,7 @@ const Home = () => {
                                     <span className="upload-text-primary">Click to upload or drag & drop</span>
                                     <span className="upload-text-secondary">PDF or DOCX (Max 5MB)</span>
                                 </label>
-                                <input type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" className="hidden-file-input" />
+                                <input ref={resumeInputRef} type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" className="hidden-file-input" />
                             </div>
 
                             {/* OR Separator */}
@@ -117,6 +127,7 @@ const Home = () => {
                                 <label htmlFor="selfDescription" className="sub-title block-label">Quick Self-Description</label>
                                 <div className="textarea-container-short">
                                     <textarea 
+                                        onChange={(e)=>setSelfDescription(e.target.value)}
                                         name="selfDescription" 
                                         id="selfDescription" 
                                         placeholder="Briefly describe your experience, key skills, and years of experience if you don't have a resume handy..."
@@ -141,7 +152,7 @@ const Home = () => {
                     {/* Card Footer */}
                     <footer className="card-footer">
                         <span className="footer-generation-info">AI-Powered Strategy Generation • Approx 30s</span>
-                        <button className="generate-btn-primary">
+                        <button onClick={handleSubmit} disabled={loading} className="generate-btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="star-icon">
                                 <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
                             </svg>

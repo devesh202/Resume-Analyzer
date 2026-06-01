@@ -9,6 +9,68 @@ The project is divided into two main parts:
 - **[Backend](./Backend)**: Node.js & Express server with MongoDB integration.
 - **[Frontend](./Frontend)**: React & Vite application for the user interface.
 
+```
+Resume Analyzer/
+├── Backend/
+│   ├── server.js                          # Entry point
+│   └── src/
+│       ├── app.js                         # Express app setup
+│       ├── config/
+│       │   └── database.js                # MongoDB connection
+│       ├── routes/
+│       │   ├── auth.routes.js             # Auth endpoints
+│       │   └── interview.routes.js        # Interview endpoints
+│       ├── controllers/
+│       │   ├── auth.controller.js         # Auth request handling
+│       │   └── interview.controller.js    # Interview request handling
+│       ├── services/
+│       │   ├── ai.services.js             # Gemini AI integration
+│       │   └── sample_resume.js           # Sample resume for testing
+│       ├── middlewares/
+│       │   ├── auth.middleware.js          # JWT verification
+│       │   └── file.middleware.js          # Multer file uploads
+│       └── models/
+│           ├── user.model.js              # User schema
+│           ├── blacklist.model.js          # Token blacklist
+│           └── interviewReport.model.js   # Interview report schema
+│
+└── Frontend/
+    ├── index.html                         # Vite HTML entry
+    ├── vite.config.js
+    └── src/
+        ├── main.jsx                       # React DOM root
+        ├── App.jsx                        # Providers + Router
+        ├── app.routes.jsx                 # Route definitions
+        ├── style.scss                     # Global styles
+        └── features/
+            ├── auth/                      # 🔐 Auth Feature
+            │   ├── auth.context.jsx       # Auth state (React Context)
+            │   ├── auth.form.scss         # Auth form styles
+            │   ├── components/
+            │   │   └── Protected.jsx      # Route guard
+            │   ├── hooks/
+            │   │   └── useAuth.js         # Auth hook (login/register/logout)
+            │   └── interview/             # Auth-scoped sub-feature
+            │       ├── interview.context.jsx  # Interview state context
+            │       ├── pages/
+            │       │   ├── Login.jsx      # Login page
+            │       │   └── Register.jsx   # Register page
+            │       ├── services/
+            │       │   └── auth.api.js    # Auth API calls (Axios)
+            │       └── style/
+            │           ├── home.scss      # Home page styles
+            │           └── interview.scss # Interview page styles
+            │
+            └── interview/                 # 🎤 Interview Feature
+                ├── hooks/
+                │   └── useInterview.js    # Interview hook (generate/get reports)
+                ├── pages/
+                │   ├── Home.jsx           # Interview landing page
+                │   └── Interview.jsx      # Live interview page
+                └── services/
+                    └── interview.api.js   # Interview API calls (Axios)
+```
+
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -18,27 +80,39 @@ The project is divided into two main parts:
 - **Bcrypt.js** for secure password hashing
 - **Multer** for file uploads
 - **pdf-parse** for extracting text from resume PDFs
+- **Google Gemini AI** for resume analysis
 
 ### Frontend
 - **React** (Vite)
 - **SCSS** for modern styling
 - **React Router** for navigation
 - **Lucide React** for icons
+- **Axios** for HTTP requests
 
 ## 🏗️ Architecture
 
-The Frontend follows a **4-Layer Architecture** for better scalability and maintainability:
+### Backend — 4-Layer Architecture
 
-1. **UI Layer**: 
-   - `components`: Reusable UI elements.
-   - `Pages`: Main application screens.
-2. **Hook Layer**:
-   - `hooks`: Custom React hooks for logic reuse.
-3. **State Layer**:
-   - `auth.context.jsx`: Authentication state management.
-   - `ai.context.jsx`: AI analysis state management.
-4. **API Layer**:
-   - `services`: API calls and external data fetching.
+Follows a classic **Routes → Controllers → Services → Models** pattern:
+
+1. **Routes**: Define API endpoints and attach middlewares.
+2. **Controllers**: Handle request/response logic.
+3. **Services**: Contain business logic (AI calls, data processing).
+4. **Models**: Mongoose schemas for MongoDB collections.
+
+### Frontend — Feature-Sliced Architecture
+
+Each domain feature is a self-contained module with its own layers:
+
+1. **Pages**: Main application screens (React components).
+2. **Hooks**: Custom React hooks encapsulating state + API logic.
+3. **Services**: Axios API call functions.
+4. **Context**: React Context providers for shared state.
+5. **Components**: Reusable UI elements (e.g., route guards).
+
+Features:
+- **`auth`** — Authentication (login, register, logout, session management).
+- **`interview`** — AI interview report generation and viewing.
 
 ## 🔐 Authentication Flow
 
@@ -77,6 +151,7 @@ The Frontend follows a **4-Layer Architecture** for better scalability and maint
 ### Prerequisites
 - Node.js installed
 - MongoDB instance (local or Atlas)
+- Google Gemini API key
 
 ### Setup
 

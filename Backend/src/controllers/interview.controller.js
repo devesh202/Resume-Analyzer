@@ -11,6 +11,13 @@ async function generateInterviewReportController(req,res){
         jobDescription
      })
 
+     if (!interviewReportByAi) {
+        return res.status(500).json({
+            success:false,
+            message:"AI failed to generate a valid interview report"
+        })
+     }
+
      const interviewReportmodel = await interviewReportModel.create({
         user : req.user.id,
         resume:resumeContent.text,
@@ -26,18 +33,35 @@ async function generateInterviewReportController(req,res){
 
     } catch (error) {
         console.log(error)
-        
+        res.status(500).json({
+            success:false,
+            message:"Internal server error"
+        })
     }
 }
 
 async function getInterviewReportByIdController(req,res){
-    const interviewId = req.params.interviewId
-    const interviewReport = await interviewReportModel.findById(interviewId)
-    res.status(200).json({
-        success:true,
-        message:"Interview report fetched successfully",
-        data:interviewReport
-    })
+    try {
+        const interviewId = req.params.interviewId
+        const interviewReport = await interviewReportModel.findById(interviewId)
+        if (!interviewReport) {
+            return res.status(404).json({
+                success:false,
+                message:"Interview report not found"
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:"Interview report fetched successfully",
+            data:interviewReport
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success:false,
+            message:"Internal server error"
+        })
+    }
 }
 
 async function getAllInterviewReportsController(req,res){

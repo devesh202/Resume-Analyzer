@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../style/interview.scss";
 import { useNavigate } from "react-router";
+import { useInterview } from "../hooks/useInterview";
 
 // Mock Data matches the format required by your project
 const REPORT_DATA = {
