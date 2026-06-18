@@ -204,6 +204,11 @@ ${jobDescription}
                 ],
               },
             },
+
+            title: {
+              type: "STRING",
+              description: "Title of the job for which the interview is being conducted",
+            },
           },
 
           required: [
@@ -212,6 +217,7 @@ ${jobDescription}
             "behavioralQuestions",
             "skillGaps",
             "preparationPlan",
+            "title",
           ],
         },
       },
@@ -240,6 +246,7 @@ ${jobDescription}
       "Error generating interview report:",
       error
     );
+    return null;
   }
 }
 

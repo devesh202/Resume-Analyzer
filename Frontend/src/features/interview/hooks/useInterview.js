@@ -16,8 +16,8 @@ export const useInterview = () => {
                 selfDescription,
                 resumeFile,
             });
-            setReport(response.interviewReport);
-            return response.interviewReport;
+            setReport(response.data);
+            return response;
         }catch(err){
             return err.response.data;
         }
@@ -30,8 +30,8 @@ export const useInterview = () => {
         setLoading(true)
         try{
             const response = await getAllInterviewReports();
-            setReports(response.interviewReports);
-            return response.interviewReports;
+            setReports(response.data);
+            return response;
         }catch(err){
             return err.response.data;
         }finally {
@@ -42,8 +42,8 @@ export const useInterview = () => {
         setLoading(true)
         try{
             const response = await getInterviewReportById(id);
-            setReport(response.interviewReport);
-            return response.interviewReport;
+            setReport(response.data);
+            return response;
         }catch(err){
             return err.response.data;
         }finally {

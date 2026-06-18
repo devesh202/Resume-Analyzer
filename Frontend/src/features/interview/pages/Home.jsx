@@ -1,27 +1,53 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useInterview } from '../hooks/useInterview';
 import "../style/home.scss";
-import Navbar from "../../auth/components/Navbar"
 import { useNavigate } from 'react-router';
+import { useAuth } from '../../auth/hooks/useAuth';
+import { toast } from "react-toastify";
 
 const Home = () => {
     const {generateReport,loading} = useInterview();
     const [selfDescription,setSelfDescription] = useState("");
     const [jobDesc, setJobDesc] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
     const resumeInputRef = useRef(null);
     const navigate = useNavigate()
+    const {user} = useAuth();
 
-    const handleSubmit = async () => {
-        const resumeFile = resumeInputRef.current.files[0];
-        const response = await generateReport({jobDesc,selfDescription,resumeFile});
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    const handleRemoveFile = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setSelectedFile(null);
+        if (resumeInputRef.current) {
+            resumeInputRef.current.value = "";
+        }
+    };
+
+    const handleGenerateReport = async () => {
+        const response = await generateReport({jobDescription: jobDesc,selfDescription,resumeFile: selectedFile});
         if(response.success){
             toast.success(response.message)
             navigate(`/interview/result/${response.data._id}`)
         }else{
             toast.error(response.message)
         }
-        
     };
+
+    if(loading){
+        return(
+            <main className='loading-screen'>
+                <h1>Loading your interview plan...</h1>
+            </main>
+        )
+    }
+
+   
 
     return (
         <div className="app-container">
@@ -42,7 +68,7 @@ const Home = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </button>
-                    <div className="user-avatar">U</div>
+                    <div className="user-avatar">{user?.username.charAt(0).toUpperCase()}</div>
                 </div>
             </nav>
 
@@ -82,7 +108,7 @@ const Home = () => {
                                     value={jobDesc}
                                     maxLength={5000}
                                 ></textarea>
-                                <span className="char-counter">{charCount} / 5000 chars</span>
+                                <span className="char-counter">{jobDesc.length} / 5000 chars</span>
                             </div>
                         </div>
 
@@ -103,16 +129,35 @@ const Home = () => {
                                     <span className="sub-title">Upload Resume</span>
                                     <span className="tag tag-best">BEST RESULTS</span>
                                 </div>
-                                <label htmlFor="resume" className="file-upload-zone">
-                                    <div className="upload-icon-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="upload-cloud-icon">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                                        </svg>
+                                {!selectedFile ? (
+                                    <label htmlFor="resume" className="file-upload-zone">
+                                        <div className="upload-icon-container">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="upload-cloud-icon">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                                            </svg>
+                                        </div>
+                                        <span className="upload-text-primary">Click to upload or drag & drop</span>
+                                        <span className="upload-text-secondary">PDF or DOCX (Max 5MB)</span>
+                                    </label>
+                                ) : (
+                                    <div className="file-uploaded-view">
+                                        <div className="file-info-wrapper">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="file-icon">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                            </svg>
+                                            <div className="file-details">
+                                                <span className="file-name">{selectedFile.name}</span>
+                                                <span className="file-size">{(selectedFile.size / 1024).toFixed(1)} KB</span>
+                                            </div>
+                                        </div>
+                                        <button onClick={handleRemoveFile} className="remove-file-btn" aria-label="Remove file">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="close-icon">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <span className="upload-text-primary">Click to upload or drag & drop</span>
-                                    <span className="upload-text-secondary">PDF or DOCX (Max 5MB)</span>
-                                </label>
-                                <input ref={resumeInputRef} type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" className="hidden-file-input" />
+                                )}
+                                <input onChange={handleFileChange} ref={resumeInputRef} type="file" name="resume" id="resume" accept=".pdf,.doc,.docx" className="hidden-file-input" />
                             </div>
 
                             {/* OR Separator */}
@@ -152,7 +197,7 @@ const Home = () => {
                     {/* Card Footer */}
                     <footer className="card-footer">
                         <span className="footer-generation-info">AI-Powered Strategy Generation • Approx 30s</span>
-                        <button onClick={handleSubmit} disabled={loading} className="generate-btn-primary">
+                        <button onClick={handleGenerateReport} disabled={loading} className="generate-btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="star-icon">
                                 <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
                             </svg>

@@ -1,106 +1,24 @@
 import React, { useEffect, useState } from "react";
 import "../style/interview.scss";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useInterview } from "../hooks/useInterview";
 
-// Mock Data matches the format required by your project
-const REPORT_DATA = {
-  "matchScore": 88, // Displaying 88 to match your target interface screenshot!
-  "technicalQuestions": [
-    {
-      "question": "Explain the Node.js event loop and how it handles asynchronous I/O operations.",
-      "intention": "To assess the candidate's deep understanding of Node.js internal architecture and non-blocking I/O.",
-      "answer": "The candidate should explain the different phases of the event loop (timers, pending callbacks, idle/prepare, poll, check, close). They should mention how Libuv handles the thread pool and how the callback queue works with the call stack to ensure performance without blocking the main thread."
-    },
-    {
-      "question": "How do you optimize a MongoDB aggregation pipeline for high-volume data?",
-      "intention": "Assess depth of MongoDB indexing strategies, pipeline staging, and memory limits during massive data aggregation runs.",
-      "answer": "Optimize by filtering data early using $match and $project stages, placing them at the beginning of the pipeline. Use indexed fields in early match stages. Be mindful of the 100MB memory limit per stage and use allowDiskUse: true if necessary, while avoiding excessive lookup operations that cause nested data scans."
-    },
-    {
-      "question": "Can you describe the Cache-Aside pattern and when you would use Redis in a Node.js application?",
-      "intention": "Evaluate caching strategies, read/write trade-offs, and state synchronization across multiple server nodes.",
-      "answer": "In Cache-Aside, the application first queries the cache. If a hit occurs, it returns data. On a miss, it queries the DB, updates the cache, and then returns data. Redis is excellent for rapid session storage, temporary caching of static resources, rate limiting, and managing server state locks."
-    },
-    {
-      "question": "What are the challenges of migrating a monolithic application to a modular service-based architecture?",
-      "intention": "Assess architectural foresight, data segregation strategies, and networking overhead in microservices.",
-      "answer": "Key challenges include managing shared database transactions across isolated services, handling network failure overhead, maintaining API contracts, implementing correlation IDs for distributed debugging, and managing service registry configs during deployments."
-    }
-  ],
-  "behavioralQuestions": [
-    {
-      "question": "You mentioned taking lead roles and managing small teams. Can you describe a specific instance where you mentored a junior developer from initial onboarding to becoming a productive team member, aligning with the mentoring responsibility?",
-      "intention": "Evaluate leadership and mentorship skills, specifically the ability to guide and develop junior talent.",
-      "answer": "In my previous role, I mentored a junior developer who was new to React. I started by pairing with them on smaller, isolated tasks, gradually increasing complexity. I encouraged a 'learn by doing' approach, providing resources and regular one-on-one code reviews focused on constructive feedback and explaining the 'why' behind best practices. I also set up a buddy system for immediate support. Within a few months, they were confidently tackling medium-sized features independently and actively participating in design discussions."
-    },
-    {
-      "question": "This role requires collaborating with backend engineers for API integration. Describe a challenging API integration you faced and how you ensured smooth collaboration and successful implementation.",
-      "intention": "Assess collaboration skills, problem-solving in cross-functional teams, and practical experience with API integration challenges.",
-      "answer": "I once worked on integrating with a new third-party payment gateway API that had complex authentication flows and incomplete documentation. My strategy involved initiating daily sync-ups with the backend team to clarify API contracts and resolve discrepancies immediately. We used Postman extensively to mock responses and test endpoints in isolation. I also implemented robust error handling and fallback UIs on the frontend to gracefully manage potential API failures, ensuring a resilient user experience despite the initial challenges. Clear, constant communication was key."
-    },
-    {
-      "question": "Tell me about a time you had to make a significant architectural decision regarding UI components to ensure scalability. What was the problem, your solution, and the outcome?",
-      "intention": "Assess architectural thinking, decision-making, and understanding of long-term scalability in frontend development.",
-      "answer": "We faced a challenge with a growing design system where component inconsistencies and slow development times became apparent. The problem was a lack of a centralized, reusable component library. My solution was to advocate for and lead the creation of a Storybook-driven component library, adopting atomic design principles. We refactored existing components into isolated, reusable units with clear props and documentation. The outcome was a significant improvement in development speed, greater UI consistency across the application, and a reduction in technical debt, making the system much more scalable."
-    }
-  ],
-  "skillGaps": [
-    {
-      "skill": "Message Queues (Kafka/RabbitMQ)",
-      "severity": "high"
-    },
-    {
-      "skill": "Advanced Docker & CI/CD Pipelines",
-      "severity": "medium"
-    },
-    {
-      "skill": "Distributed Systems Design",
-      "severity": "medium"
-    },
-    {
-      "skill": "Production-level Redis management",
-      "severity": "low"
-    }
-  ],
-  "preparationPlan": [
-    {
-      "day": 1,
-      "focus": "React Advanced Concepts & Modern CSS Frameworks",
-      "tasks": [
-        "Review advanced React hooks (useReducer, useRef, useContext, custom hooks) and their practical applications.",
-        "Practice component composition, render props, and higher-order components for building reusable UIs.",
-        "Study and build a small project using a modern CSS framework like Tailwind CSS or Styled Components, focusing on responsive design and theming."
-      ]
-    },
-    {
-      "day": 2,
-      "focus": "State Management (Redux/Zustand) & TypeScript",
-      "tasks": [
-        "Dive deep into Redux Toolkit, understanding slices, reducers, actions, and asynchronous operations (thunks). Implement a small feature using it.",
-        "Explore Zustand as a lighter alternative for state management and understand its use cases.",
-        "Refactor an existing JavaScript project or build a new one with TypeScript, focusing on defining interfaces, types, generics, and leveraging its benefits for complex applications."
-      ]
-    },
-    {
-      "day": 3,
-      "focus": "Testing & Browser Performance Optimization",
-      "tasks": [
-        "Write comprehensive unit tests for React components and utility functions using Jest and React Testing Library, focusing on behavior rather than implementation details.",
-        "Set up and write end-to-end tests for critical user flows using Cypress.",
-        "Study common browser performance bottlenecks (e.g., large bundles, excessive re-renders, slow network requests) and practice using browser developer tools (Lighthouse, Performance tab) for identification and optimization."
-      ]
-    }
-  ]
-};
 
 const Interview = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("technical"); // Options: "technical", "behavioral", "roadmap"
+  const { id } = useParams();
+  const [activeTab, setActiveTab] = useState("technical");
   
-  // Track expanded questions by index (first question is open by default like the image)
   const [expandedTech, setExpandedTech] = useState({ 0: true });
   const [expandedBehavioral, setExpandedBehavioral] = useState({ 0: true });
+
+  const {report, getReportById, loading} = useInterview();
+
+  useEffect(() => {
+    if (id && (!report || report._id !== id)) {
+      getReportById(id)
+    }
+  }, [id])
 
   const toggleTech = (idx) => {
     setExpandedTech(prev => ({
@@ -116,10 +34,25 @@ const Interview = () => {
     }));
   };
 
-  // SVG Progress circle calculations
+  if (loading) {
+    return (
+      <main className="loading-screen">
+        <h1>Loading your interview plan...</h1>
+      </main>
+    )
+  }
+
+  if (!report) {
+    return (
+      <main className="loading-screen">
+        <h1>No report data available.</h1>
+      </main>
+    )
+  }
+
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (REPORT_DATA.matchScore / 100) * circumference;
+  const strokeDashoffset = circumference - (report.matchScore / 100) * circumference;
 
   return (
     <div className="interview-report-page">
@@ -200,11 +133,11 @@ const Interview = () => {
               <>
                 <header className="pane-header">
                   <h3 className="pane-title">Technical Questions</h3>
-                  <span className="q-count-badge">{REPORT_DATA.technicalQuestions.length} questions</span>
+                  <span className="q-count-badge">{report.technicalQuestions.length} questions</span>
                 </header>
 
                 <div className="qna-list">
-                  {REPORT_DATA.technicalQuestions.map((item, idx) => {
+                  {report.technicalQuestions.map((item, idx) => {
                     const isExpanded = !!expandedTech[idx];
                     return (
                       <div 
@@ -253,11 +186,11 @@ const Interview = () => {
               <>
                 <header className="pane-header">
                   <h3 className="pane-title">Behavioral Questions</h3>
-                  <span className="q-count-badge">{REPORT_DATA.behavioralQuestions.length} questions</span>
+                  <span className="q-count-badge">{report.behavioralQuestions.length} questions</span>
                 </header>
 
                 <div className="qna-list">
-                  {REPORT_DATA.behavioralQuestions.map((item, idx) => {
+                  {report.behavioralQuestions.map((item, idx) => {
                     const isExpanded = !!expandedBehavioral[idx];
                     return (
                       <div 
@@ -309,21 +242,24 @@ const Interview = () => {
                 </header>
 
                 <div className="roadmap-timeline">
-                  {REPORT_DATA.preparationPlan.map((step, idx) => (
-                    <div className="timeline-step" key={idx}>
-                      <div className="timeline-marker active">
-                        {step.day}
+                  {report.preparationPlan.map((step, idx) => (
+                    <div className={`tracking-step ${idx === 0 ? "active" : ""}`} key={idx}>
+                      <div className="tracking-connector">
+                        <div className="tracking-dot">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                        {idx < report.preparationPlan.length - 1 && <div className="tracking-line" />}
                       </div>
-
-                      <div className="timeline-card">
-                        <span className="day-num">Day {step.day} Focus Area</span>
-                        <h4 className="focus-title">{step.focus}</h4>
-
-                        <div className="tasks-list">
+                      <div className="tracking-card">
+                        <span className="tracking-day">Day {step.day}</span>
+                        <h4 className="tracking-focus">{step.focus}</h4>
+                        <div className="tracking-tasks">
                           {step.tasks.map((task, tIdx) => (
-                            <div className="task-item" key={tIdx}>
-                              <span className="checkbox-bullet"></span>
-                              <p className="task-text">{task}</p>
+                            <div className="tracking-task" key={tIdx}>
+                              <span className="tracking-bullet" />
+                              <span>{task}</span>
                             </div>
                           ))}
                         </div>
@@ -355,11 +291,11 @@ const Interview = () => {
                   />
                 </svg>
                 <div className="score-text-val">
-                  {REPORT_DATA.matchScore}
+                  {report.matchScore}
                 </div>
               </div>
               <div className="matching-feedback">
-                {REPORT_DATA.matchScore >= 80 ? "Strong match for this role" : "Good match for this role"}
+                {report.matchScore >= 80 ? "Strong match for this role" : "Good match for this role"}
               </div>
             </div>
 
@@ -367,7 +303,7 @@ const Interview = () => {
             <div className="gaps-widget">
               <span className="widget-label">SKILL GAPS</span>
               <div className="gaps-badges-stack">
-                {REPORT_DATA.skillGaps.map((item, idx) => {
+                {report.skillGaps.map((item, idx) => {
                   let severityClass = "severity-low";
                   if (item.severity === "high") severityClass = "severity-high";
                   else if (item.severity === "medium") severityClass = "severity-medium";

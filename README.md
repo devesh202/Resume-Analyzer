@@ -1,6 +1,6 @@
 # Resume Analyzer
 
-A comprehensive Full-Stack application designed to analyze resumes using AI. The project is structured into a Backend service and a Frontend interactive dashboard.
+A comprehensive Full-Stack application that analyzes resumes using AI to generate personalized interview preparation reports — including technical/behavioral questions, skill gaps, and a day-by-day study roadmap.
 
 ## 📁 Project Structure
 
@@ -50,25 +50,24 @@ Resume Analyzer/
             │   │   └── Protected.jsx      # Route guard
             │   ├── hooks/
             │   │   └── useAuth.js         # Auth hook (login/register/logout)
-            │   └── interview/             # Auth-scoped sub-feature
-            │       ├── interview.context.jsx  # Interview state context
-            │       ├── pages/
-            │       │   ├── Login.jsx      # Login page
-            │       │   └── Register.jsx   # Register page
-            │       ├── services/
-            │       │   └── auth.api.js    # Auth API calls (Axios)
-            │       └── style/
-            │           ├── home.scss      # Home page styles
-            │           └── interview.scss # Interview page styles
+            │   ├── pages/
+            │   │   ├── Login.jsx          # Login page
+            │   │   └── Register.jsx       # Register page
+            │   └── services/
+            │       └── auth.api.js        # Auth API calls (Axios)
             │
             └── interview/                 # 🎤 Interview Feature
+                ├── interview.context.jsx  # Interview state context
                 ├── hooks/
                 │   └── useInterview.js    # Interview hook (generate/get reports)
                 ├── pages/
-                │   ├── Home.jsx           # Interview landing page
-                │   └── Interview.jsx      # Live interview page
-                └── services/
-                    └── interview.api.js   # Interview API calls (Axios)
+                │   ├── Home.jsx           # Interview setup / landing page
+                │   └── Interview.jsx      # AI-generated report viewer
+                ├── services/
+                │   └── interview.api.js   # Interview API calls (Axios)
+                └── style/
+                    ├── home.scss          # Home page styles
+                    └── interview.scss     # Interview report page styles
 ```
 
 ## 🛠️ Tech Stack
@@ -79,15 +78,17 @@ Resume Analyzer/
 - **JWT** (JSON Web Tokens) for authentication
 - **Bcrypt.js** for secure password hashing
 - **Multer** for file uploads
-- **pdf-parse** for extracting text from resume PDFs
-- **Google Gemini AI** for resume analysis
+- **pdf-parse** for extracting text from PDF resumes
+- **mammoth** for extracting text from DOCX resumes
+- **Google Gemini AI** (`gemini-2.5-flash`) for AI report generation
+- **Zod** for runtime validation of AI responses
 
 ### Frontend
 - **React** (Vite)
 - **SCSS** for modern styling
 - **React Router** for navigation
-- **Lucide React** for icons
 - **Axios** for HTTP requests
+- **React Toastify** for toast notifications
 
 ## 🏗️ Architecture
 
@@ -114,44 +115,70 @@ Features:
 - **`auth`** — Authentication (login, register, logout, session management).
 - **`interview`** — AI interview report generation and viewing.
 
-## 🔐 Authentication Flow
+## ✨ Features
 
-- **Protected Routes**: Implemented using a `Protected` component that checks for an active user session before granting access to specific pages.
-- **Auto-Login**: The `AuthProvider` performs an automatic "get me" check on initial load to restore previous sessions.
-- **Error Handling**: Comprehensive error handling in the API layer and hooks to provide a smooth user experience.
+### 🔐 Authentication
+- JWT-based login and registration with `HttpOnly` cookie sessions.
+- **Auto-Login**: The `AuthProvider` performs an automatic `get-me` check on initial load to restore previous sessions.
+- **Protected Routes**: A `Protected` route guard redirects unauthenticated users to the login page.
+- **Token Blacklisting**: Logout invalidates tokens server-side to prevent reuse.
+- **User Avatar**: Displays the first letter of the logged-in user's username as a profile avatar.
 
-## 🤖 AI Integration
+### 🤖 AI Interview Report Generation
+- Upload a **PDF or DOCX** resume — both are parsed and fed directly into the AI pipeline.
+- Provide an optional **self-description** text if no resume is available.
+- Paste in the **job description** to tailor the analysis.
+- **Gemini AI** generates a structured report including:
+  - **Match Score** — percentage fit between your profile and the role.
+  - **Technical Questions** — with interviewer intent and model answers.
+  - **Behavioral Questions** — with interviewer intent and model answers.
+  - **Skill Gaps** — ranked by severity (high / medium / low).
+  - **Preparation Plan** — a day-by-day study roadmap.
+  - **Job Title** — extracted from the job description.
+- **Structured JSON Output**: Gemini is constrained with a JSON response schema to ensure valid, parseable output every time.
+- **Zod Validation**: AI responses are validated against a Zod schema for type safety.
 
-- **Gemini AI**: Integrated Google's Gemini AI to analyze resumes against job descriptions and generate preparation reports.
-- **Resume Parsing**: Built-in support for uploading PDF resumes using `multer` and extracting content with `pdf-parse` to feed directly into the AI pipeline.
-- **Structured JSON Output**: Uses advanced schema enforcement to ensure the AI always returns valid, parseable JSON.
-- **Zod Validation**: All AI responses are validated using Zod schemas to ensure data integrity and type safety.
-- **Interview Report Model**: A detailed schema to store match scores, technical/behavioral questions, skill gaps, and custom preparation plans.
-- **Job Title Extraction**: Added `title` parsing to both the Zod schemas and database models to store the job designation for each interview report.
+### 📂 Resume Upload UX
+- Drag & drop or click-to-upload file zone.
+- After selecting a file, the upload zone is replaced with a **file preview card** showing the filename and file size.
+- A remove button allows clearing the selection before submission.
+
+### 📄 Report Viewer
+- Navigate to `/interview/result/:id` to view a generated report.
+- The report is fetched by ID from MongoDB and displayed in a full-page dashboard.
+- **Tabbed navigation** between Technical Questions, Behavioral Questions, and Road Map sections.
+- **Expandable Q&A cards** with interviewer intent and model answers.
+- **Chronological Road Map** timeline UI for the preparation plan.
+- **Match Score** circular progress indicator.
+- **Skill Gap** severity badges.
 
 ---
 
 ## 🔗 API Endpoints
 
 ### Authentication (`/api/auth`)
-- `POST /register`: Registers a new user session.
-- `POST /login`: Authenticates standard credential details.
-- `GET /logout`: Securely clears active cookie tokens.
-- `GET /get-me` `[Protected]`: Returns the currently active profile.
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| `POST` | `/register` | Public | Register a new user |
+| `POST` | `/login` | Public | Login with email & password |
+| `GET` | `/logout` | Public | Clear session cookie |
+| `GET` | `/get-me` | 🔒 Protected | Get current user profile |
 
 ### AI Interview Prep (`/api/interview`)
-- `POST /` `[Protected]`: Generates an AI interview strategy using a PDF resume, job description, and self-description.
-- `GET /report/:interviewId` `[Protected]`: Fetches a single completed interview strategy report by its ID.
-- `GET /report/getAllInterviewReports` `[Protected]`: Fetches a historical catalog of all interview reports generated by the user.
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| `POST` | `/` | 🔒 Protected | Generate an AI interview report (accepts resume file + job description) |
+| `GET` | `/report/getAllInterviewReports` | 🔒 Protected | Get all reports for the current user |
+| `GET` | `/report/:interviewId` | 🔒 Protected | Get a single report by ID |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js installed
-- MongoDB instance (local or Atlas)
-- Google Gemini API key
+- Node.js v18+
+- MongoDB instance (local or [Atlas](https://www.mongodb.com/atlas))
+- [Google Gemini API key](https://aistudio.google.com/app/apikey)
 
 ### Setup
 
@@ -159,9 +186,18 @@ Features:
    ```bash
    cd Backend
    npm install
-   # Create .env file with MONGO_URI, JWT_SECRET, and GEMINI_API_KEY
+   ```
+   Create a `.env` file in the `Backend/` directory:
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+   Then start the server:
+   ```bash
    npm run dev
    ```
+   The backend will run on **http://localhost:3000**.
 
 2. **Frontend**:
    ```bash
@@ -169,3 +205,4 @@ Features:
    npm install
    npm run dev
    ```
+   The frontend will run on **http://localhost:5173**.

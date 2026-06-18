@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context";
-import { login, register, logout, getMe } from "../interview/services/auth.api"
+import { login, register, logout, getMe } from "../services/auth.api"
 export const useAuth = () => {
     const context = useContext(AuthContext)
     const { user, setUser, loading, setLoading } = context
@@ -8,10 +8,12 @@ export const useAuth = () => {
     const handleLogin = async ({ email, password }) => {
         try {
             setLoading(true);
-            const data = await login({ email, password })
+            const data = await login({ email, password });
             setUser(data.user);
+            return data.user;
         } catch (error) {
             console.error("Error logging in", error);
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -23,9 +25,10 @@ export const useAuth = () => {
             setLoading(true);
             const data = await register({ username, email, password })
             setUser(data.user);
-            setLoading(false);
+            return data.user;
         } catch (error) {
             console.error("Error registering", error);
+            throw error;
         } finally {
             setLoading(false);
         }

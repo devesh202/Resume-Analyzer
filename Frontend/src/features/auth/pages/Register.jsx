@@ -1,17 +1,23 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useState } from 'react'
-import { useAuth } from "../../hooks/useAuth"
+import { useAuth } from "../hooks/useAuth"
 const Register = () => {
     const { handleRegister, loading } = useAuth()
     const navigate = useNavigate()
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [errorMsg, setErrorMsg] = useState("")
     async function handleSubmit(e) {
         e.preventDefault()
-        await handleRegister({ username, email, password })
-        navigate("/")
+        setErrorMsg("")
+        try {
+            await handleRegister({ username, email, password })
+            navigate("/")
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || "Error registering user")
+        }
     }
 
     if (loading) {
@@ -22,6 +28,7 @@ const Register = () => {
         <main>
             <div className="form-container">
                 <h1>Register</h1>
+                {errorMsg && <p style={{ color: "red", margin: "10px 0" }}>{errorMsg}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className='input-group'>
                         <label htmlFor='username'>Username</label>

@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { getMe } from "./interview/services/auth.api";
+import { getMe } from "./services/auth.api";
 import { useEffect } from "react";
 export const AuthContext = createContext()
 
@@ -9,9 +9,15 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
 
     const getAndSetUser = async () => {
-        const data = await getMe();
-        setUser(data.user);
-        setLoading(false);
+        try {
+            const data = await getMe();
+            setUser(data.user);
+        } catch (error) {
+            console.warn("User is not logged in yet");
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
