@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../style/interview.scss";
 import { useNavigate, useParams } from "react-router";
 import { useInterview } from "../hooks/useInterview";
+import { useAuth } from "../../auth/hooks/useAuth";
 
 
 const Interview = () => {
@@ -12,13 +13,8 @@ const Interview = () => {
   const [expandedTech, setExpandedTech] = useState({ 0: true });
   const [expandedBehavioral, setExpandedBehavioral] = useState({ 0: true });
 
-  const {report, getReportById, loading} = useInterview();
-
-  useEffect(() => {
-    if (id && (!report || report._id !== id)) {
-      getReportById(id)
-    }
-  }, [id])
+  const {report, loading} = useInterview(id);
+  const {user} = useAuth();
 
   const toggleTech = (idx) => {
     setExpandedTech(prev => ({
@@ -75,7 +71,7 @@ const Interview = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </button>
-          <div className="user-avatar">U</div>
+          <div className="user-avatar">{user?.username?.charAt(0)?.toUpperCase() || '?'}</div>
         </div>
       </nav>
 

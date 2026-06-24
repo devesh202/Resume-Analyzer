@@ -6,7 +6,7 @@ import { useAuth } from '../../auth/hooks/useAuth';
 import { toast } from "react-toastify";
 
 const Home = () => {
-    const {generateReport,loading} = useInterview();
+    const {generateReport,loading,reports } = useInterview();
     const [selfDescription,setSelfDescription] = useState("");
     const [jobDesc, setJobDesc] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
@@ -32,7 +32,7 @@ const Home = () => {
     const handleGenerateReport = async () => {
         const response = await generateReport({jobDescription: jobDesc,selfDescription,resumeFile: selectedFile});
         if(response.success){
-            toast.success(response.message)
+            toast.success(response.message) 
             navigate(`/interview/result/${response.data._id}`)
         }else{
             toast.error(response.message)
@@ -68,7 +68,7 @@ const Home = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </button>
-                    <div className="user-avatar">{user?.username.charAt(0).toUpperCase()}</div>
+                    <div className="user-avatar">{user?.username?.charAt(0)?.toUpperCase() || '?'}</div>
                 </div>
             </nav>
 
@@ -204,6 +204,49 @@ const Home = () => {
                             Generate My Interview Strategy
                         </button>
                     </footer>
+                </div>
+
+                {/* all reports */}
+                <div className="reports-section">
+                    <div className="reports-header">
+                        <h2>Past Reports</h2>
+                        <span className="reports-count">{reports.length} report{reports.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    {reports.length === 0 ? (
+                        <div className="reports-empty">
+                            <p>No reports yet. Generate your first interview strategy above!</p>
+                        </div>
+                    ) : (
+                        <div className="reports-grid">
+                            {reports.map((report) => (
+                                <div key={report._id} onClick={()=>navigate(`/interview/result/${report._id}`)} className="report-card">
+                                    <div className="report-card-top">
+                                        <div className="report-score" style={{
+                                            background: report.matchScore >= 70
+                                                ? 'conic-gradient(#22c55e 0deg, #22c55e ' + (report.matchScore * 3.6) + 'deg, rgba(255,255,255,0.06) ' + (report.matchScore * 3.6) + 'deg)'
+                                                : report.matchScore >= 40
+                                                ? 'conic-gradient(#eab308 0deg, #eab308 ' + (report.matchScore * 3.6) + 'deg, rgba(255,255,255,0.06) ' + (report.matchScore * 3.6) + 'deg)'
+                                                : 'conic-gradient(#ef4444 0deg, #ef4444 ' + (report.matchScore * 3.6) + 'deg, rgba(255,255,255,0.06) ' + (report.matchScore * 3.6) + 'deg)'
+                                        }}>
+                                            <div className="report-score-inner">
+                                                <span className="report-score-value">{report.matchScore}</span>
+                                                <span className="report-score-label">match</span>
+                                            </div>
+                                        </div>
+                                        <div className="report-card-info">
+                                            <h3 className="report-title">{report.title}</h3>
+                                            <p className="report-date">{new Date(report.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                        </div>
+                                    </div>
+                                    <div className="report-card-arrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" width="18" height="18">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Bottom External Links Footer */}

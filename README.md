@@ -152,6 +152,11 @@ Features:
 - **Match Score** circular progress indicator.
 - **Skill Gap** severity badges.
 
+### 📊 Past Reports History
+- The Home page features a dashboard section listing all previously generated interview reports.
+- Each report card shows the extracted job title, generation date, and a color-coded circular progress match score indicator.
+- Clicking any report card navigates the user directly to the report viewer dashboard.
+
 ---
 
 ## 🔗 API Endpoints
