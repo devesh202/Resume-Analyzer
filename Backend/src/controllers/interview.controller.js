@@ -1,6 +1,6 @@
 const pdfParse = require("pdf-parse")
 const mammoth = require("mammoth")
-const generateInterviewReport = require("../services/ai.services")
+const {generateInterviewReport,generateResumePdf} = require("../services/ai.services")
 const interviewReportModel = require("../models/interviewReport.model")
 async function generateInterviewReportController(req, res) {
     try {
@@ -117,4 +117,29 @@ async function getAllInterviewReportsController(req, res) {
         })
     }
 }
-module.exports = { generateInterviewReportController, getInterviewReportByIdController, getAllInterviewReportsController }
+
+async function generateResumeController(req,res){
+    const {interviewId} = req.params
+    const interviewReport = await interviewReportModel.findById(interviewId)
+    if (!interviewReport) {
+        return res.status(404).json({
+            success: false,
+            message: "Interview report not found"
+        })
+    }
+    const {resume,jobDescription,selfDescription} = interviewReport
+    const pdfBuffer = await generateResumePdf({resume,jobDescription,selfDescription})
+    if(!pdfBuffer){
+        return res.status(500).json({
+            success: false,
+            message: "Failed to generate resume"
+        })
+    }
+    res.set({
+        "Content-Type":"application/pdf",
+        "Content-Disposition": `attachment; filename=resume-${interviewId}.pdf`
+    })
+    res.send(pdfBuffer)
+
+}
+module.exports = { generateInterviewReportController, getInterviewReportByIdController, getAllInterviewReportsController,generateResumeController }

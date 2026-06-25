@@ -13,8 +13,24 @@ const Interview = () => {
   const [expandedTech, setExpandedTech] = useState({ 0: true });
   const [expandedBehavioral, setExpandedBehavioral] = useState({ 0: true });
 
-  const {report, loading} = useInterview(id);
+  const {report, loading, downloadResume} = useInterview(id);
   const {user} = useAuth();
+
+  const [resumeLoading, setResumeLoading] = useState(false);
+
+  const handleGenerateResume = async () => {
+    setResumeLoading(true);
+    try {
+      const response = await downloadResume(id);
+      if (response.success) {
+        // success - file download triggered
+      }
+    } catch {
+      // handled in hook
+    } finally {
+      setResumeLoading(false);
+    }
+  };
 
   const toggleTech = (idx) => {
     setExpandedTech(prev => ({
@@ -118,6 +134,19 @@ const Interview = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
               Road Map
+            </button>
+
+            <div className="sidebar-tabs-spacer" />
+
+            <button
+              onClick={handleGenerateResume}
+              disabled={resumeLoading}
+              className="sidebar-resume-btn"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              {resumeLoading ? "Generating..." : "Generate Resume"}
             </button>
           </aside>
 
@@ -312,7 +341,6 @@ const Interview = () => {
                 })}
               </div>
             </div>
-
           </aside>
 
         </div>

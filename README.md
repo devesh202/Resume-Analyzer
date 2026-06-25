@@ -81,6 +81,7 @@ Resume Analyzer/
 - **pdf-parse** for extracting text from PDF resumes
 - **mammoth** for extracting text from DOCX resumes
 - **Google Gemini AI** (`gemini-2.5-flash`) for AI report generation
+- **Puppeteer** for PDF resume generation
 - **Zod** for runtime validation of AI responses
 
 ### Frontend
@@ -138,6 +139,13 @@ Features:
 - **Structured JSON Output**: Gemini is constrained with a JSON response schema to ensure valid, parseable output every time.
 - **Zod Validation**: AI responses are validated against a Zod schema for type safety.
 
+### 📝 AI Resume Generation
+- Generate a polished, AI-crafted resume PDF from any interview report with a single click.
+- The resume is tailored to the **job title and requirements** extracted from the original job description.
+- **Per-report download** — each report card in the Past Reports section has its own download button.
+- **Contextual placement** — the "Generate Resume" button is available both on the interview detail page sidebar and on each report card in the dashboard.
+- Uses **Gemini AI** to write the resume content and **Puppeteer** to render it as a PDF.
+
 ### 📂 Resume Upload UX
 - Drag & drop or click-to-upload file zone.
 - After selecting a file, the upload zone is replaced with a **file preview card** showing the filename and file size.
@@ -151,10 +159,12 @@ Features:
 - **Chronological Road Map** timeline UI for the preparation plan.
 - **Match Score** circular progress indicator.
 - **Skill Gap** severity badges.
+- **Generate Resume** button in the sidebar to download an AI-tailored resume PDF for the viewed report.
 
 ### 📊 Past Reports History
 - The Home page features a dashboard section listing all previously generated interview reports.
 - Each report card shows the extracted job title, generation date, and a color-coded circular progress match score indicator.
+- Each report card has a **download icon** to generate a resume PDF for that specific report without navigating away.
 - Clicking any report card navigates the user directly to the report viewer dashboard.
 
 ---
@@ -175,6 +185,7 @@ Features:
 | `POST` | `/` | 🔒 Protected | Generate an AI interview report (accepts resume file + job description) |
 | `GET` | `/report/getAllInterviewReports` | 🔒 Protected | Get all reports for the current user |
 | `GET` | `/report/:interviewId` | 🔒 Protected | Get a single report by ID |
+| `POST` | `/resume/:interviewId` | 🔒 Protected | Generate and download an AI-tailored resume PDF |
 
 ---
 

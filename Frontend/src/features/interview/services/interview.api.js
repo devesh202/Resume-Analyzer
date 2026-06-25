@@ -42,3 +42,15 @@ export const getAllInterviewReports = async() => {
     const response = await api.get(`/interview/report/getAllInterviewReports`);
     return response.data;
 }
+/**
+ * @description Generate and download resume PDF for an interview report
+ * @access Private
+ * @param {string} interviewId
+ * @returns {Promise<Blob>}
+ */
+export const downloadResumePdf = async(interviewId) => {
+    const response = await api.post(`/interview/resume/${interviewId}`, {}, {
+        responseType: 'blob',
+    });
+    return response.data;
+}
