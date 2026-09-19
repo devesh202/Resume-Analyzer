@@ -10,11 +10,8 @@ async function authUser(req,res,next){
         return res.status(401).json({message:"Token is Invalid"})
     }
     try{
-
         const decoded = jwt.verify(token,process.env.JWT_SECRET)
-        console.log(decoded)
         req.user = decoded
-
         next()
     }
     catch(error){

@@ -1,13 +1,21 @@
 const app = require('./src/app')
-const {resume, jobDescription, selfDescription} = require('./src/services/sample_resume')
-require('dotenv').config()
-console.log(process.env.MONGO_URI)
 const connectToDB = require('./src/config/database')
-// const generateInterviewReport = require('./src/services/ai.services')
+const morgan = require('morgan')
+require('dotenv').config()
+app.use(morgan('dev'))
 connectToDB()
 
-// generateInterviewReport({resume, jobDescription, selfDescription})
+const PORT = process.env.PORT || 3000
+const server = app.listen(PORT, ()=>{
+    console.log(`Server running on port ${PORT}`)
+})
 
-app.listen(3000,()=>{
-    console.log("Server running on port 3000")
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err)
+    server.close(() => process.exit(1))
+})
+
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason)
+    server.close(() => process.exit(1))
 })
