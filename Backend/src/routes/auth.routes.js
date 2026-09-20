@@ -1,33 +1,28 @@
 const {Router} = require("express")
+const rateLimit = require("express-rate-limit")
+const { body } = require("express-validator")
 const authRouter = Router()
 const authController = require("../controllers/auth.controller")
 const authMiddleware = require("../middlewares/auth.middleware")
 
-/**
- * @route POST /api/auth/register
- * @desc Register a new user
- * @access Public
- */
-authRouter.post("/register", authController.registerUserController)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+})
 
-/**
- * @route POST /api/auth/login
- * @desc Login a user with email and password
- * @access Public
- */
-authRouter.post("/login", authController.loginUserController)
+authRouter.post("/register", authLimiter, [
+    body("username").trim().isLength({ min: 3 }).withMessage("Username must be at least 3 characters"),
+    body("email").isEmail().withMessage("Invalid email format"),
+    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+], authController.registerUserController)
 
-/**
- * @route GET /api/auth/logout
- * @desc clear token from user cookie and add token to blacklist
- * @access public
- */
+authRouter.post("/login", authLimiter, [
+    body("email").isEmail().withMessage("Invalid email format"),
+    body("password").notEmpty().withMessage("Password is required"),
+], authController.loginUserController)
+
 authRouter.get("/logout", authController.logoutUserController)
-
-/**
- * @route GET /api/auth/get-me
- * @desc get current logged in user
- * @access private
- */
-authRouter.get("/get-me",authMiddleware.authUser,authController.getMeController)
+authRouter.get("/get-me", authMiddleware.authUser, authController.getMeController)
 module.exports = authRouter
