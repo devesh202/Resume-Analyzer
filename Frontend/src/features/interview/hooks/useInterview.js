@@ -13,10 +13,10 @@ export const useInterview = (id) => {
         if (id && (!report || report._id !== id)) {
             getReportById(id)
         }
-        else{
-            getAllReports()
-        }
-    }, [id])
+    }, [id, report])
+    if (!id) {
+        getAllReports()
+    }
     const generateReport = async({jobDescription,selfDescription, resumeFile}) => {
         setLoading(true)
         try{

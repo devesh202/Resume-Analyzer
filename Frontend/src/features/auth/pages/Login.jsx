@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router'
 import "../auth.form.scss"
 import { useAuth } from "../hooks/useAuth"
-import { useState } from 'react'
 import { useNavigate } from 'react-router'
+
 const Login = () => {
   const { handleLogin, loading } = useAuth()
   const [email, setEmail] = useState("")
@@ -11,9 +11,26 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("")
   const Navigate = useNavigate()
 
+  const validateForm = () => {
+    if (!email || !password) {
+      setErrorMsg("All fields are required")
+      return false
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setErrorMsg("Please enter a valid email")
+      return false
+    }
+    if (password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters")
+      return false
+    }
+    return true
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setErrorMsg("")
+    if (!validateForm()) return
     try {
       await handleLogin({ email, password })
       Navigate("/")
