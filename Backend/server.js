@@ -2,6 +2,7 @@ const app = require('./src/app')
 const connectToDB = require('./src/config/database')
 const morgan = require('morgan')
 require('dotenv').config()
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 app.use(morgan('dev'))
 connectToDB()
 
