@@ -30,7 +30,7 @@ async function registerUserController(req,res){
     const passwordHash = await bcrypt.hash(password,salt)
     const user = await userModel.create({username,email,password:passwordHash})
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"1d"})
-    res.cookie("token", token, { httpOnly: true, sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', secure: process.env.NODE_ENV === 'production' ? true : false })
+    res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true })
     res.json({message:"User registered successfully",
         user:{id:user._id,username:user.username,email:user.email}
     })
@@ -63,7 +63,7 @@ async function loginUserController(req,res){
         return res.status(400).json({message:"Invalid email or password"})
     }
     const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"1d"})
-    res.cookie("token", token, { httpOnly: true, sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', secure: process.env.NODE_ENV === 'production' ? true : false })
+    res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true })
     res.status(200).json({message:"User logged in successfully",
         user:{id:user._id,username:user.username,email:user.email}
     })
@@ -82,11 +82,7 @@ async function logoutUserController(req,res){
     if(token){
         await tokenBlacklistModel.create({token})
     }
-    res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    secure: process.env.NODE_ENV === 'production' ? true : false,
-})
+    res.clearCookie("token", { httpOnly: true, sameSite: "none", secure: true })
     res.status(200).json({message:"User logged out successfully"})
 
 }
