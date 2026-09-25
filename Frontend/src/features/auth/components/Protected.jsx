@@ -1,5 +1,5 @@
 import { useAuth } from "../hooks/useAuth"
-import { Navigate } from "react-router"
+import { Navigate } from "react-router-dom"
 // protected component checks whether user is logged in or not
 
 const Protected = ({ children }) => {

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useInterview } from '../hooks/useInterview';
 import "../style/home.scss";
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { toast } from "react-toastify";
 
