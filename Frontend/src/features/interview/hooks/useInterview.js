@@ -1,5 +1,5 @@
 import {getAllInterviewReports, getInterviewReportById, generateInterviewReport, downloadResumePdf} from "../services/interview.api";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { InterviewContext } from "../interview.context";
 
 export const useInterview = (id) => {
@@ -8,15 +8,20 @@ export const useInterview = (id) => {
         throw new Error("useInterview must be used within InterviewProvider");
     }
     const {loading, setLoading, report, setReport, setReports, reports} = context;
+    const hasLoaded = useRef(false);
 
     useEffect(() => {
         if (id && (!report || report._id !== id)) {
             getReportById(id)
         }
     }, [id, report])
-    if (!id) {
-        getAllReports()
-    }
+
+    useEffect(() => {
+        if (!id && !hasLoaded.current) {
+            hasLoaded.current = true;
+            getAllReports()
+        }
+    }, [id])
     const generateReport = async({jobDescription,selfDescription, resumeFile}) => {
         setLoading(true)
         try{
