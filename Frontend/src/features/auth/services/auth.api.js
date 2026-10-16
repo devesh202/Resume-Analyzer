@@ -3,15 +3,7 @@ import axios from "axios";
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
     withCredentials: true,
-    timeout: 15000,
-})
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token")
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
+    timeout: 10000,
 })
 
 export async function register({ username, email, password }) {
@@ -20,10 +12,7 @@ export async function register({ username, email, password }) {
             username,
             email,
             password,
-        });
-        if (response.data?.token) {
-            localStorage.setItem("token", response.data.token);
-        }
+        },);
         return response.data;
 
     } catch (error) {
@@ -39,9 +28,6 @@ export async function login({ email, password }) {
             email,
             password,
         });
-        if (response.data?.token) {
-            localStorage.setItem("token", response.data.token);
-        }
         return response.data;
     } catch (error) {
         console.error("Error logging in", error);
@@ -53,10 +39,8 @@ export async function login({ email, password }) {
 export async function logout() {
     try {
         const response = await api.get("/auth/logout");
-        localStorage.removeItem("token");
         return response.data;
     } catch (error) {
-        localStorage.removeItem("token");
         console.error("Error logging out", error);
         throw error;
     }

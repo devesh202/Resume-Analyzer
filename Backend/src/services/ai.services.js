@@ -9,7 +9,7 @@ const ai = new GoogleGenAI({
 });
 
 const interviewReportSchema = z.object({
-  matchScore: z.coerce.number().min(0).max(100).catch(70),
+  matchScore: z.number(),
 
   technicalQuestions: z.array(
     z.object({
@@ -30,18 +30,18 @@ const interviewReportSchema = z.object({
   skillGaps: z.array(
     z.object({
       skill: z.string(),
-      severity: z.string().transform(s => s.toLowerCase()).pipe(z.enum(["low", "medium", "high"])).catch("medium"),
+      severity: z.enum(["low", "medium", "high"]),
     })
   ),
 
   preparationPlan: z.array(
     z.object({
-      day: z.coerce.number(),
+      day: z.number(),
       focus: z.string(),
       tasks: z.array(z.string()),
     }),
   ),
-  title: z.string().default("Interview Preparation Report"),
+  title: z.string().describe("Title of the job for which the interview is being conducted"),
 });
 
 async function generateInterviewReport({

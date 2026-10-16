@@ -14,31 +14,23 @@ async function generateInterviewReportController(req, res) {
 
         let resumeText = ""
         if (req.file) {
-            try {
-                const mime = req.file.mimetype || ""
-                const ext = req.file.originalname?.toLowerCase() || ""
-                if (mime === "application/pdf" || ext.endsWith(".pdf")) {
-                    const resumeContent = await (new pdfParse.PDFParse({ data: new Uint8Array(req.file.buffer) })).getText()
-                    resumeText = resumeContent.text ? resumeContent.text.trim() : ""
-                } else if (mime.includes("wordprocessing") || ext.endsWith(".docx")) {
-                    const result = await mammoth.extractRawText({ buffer: req.file.buffer })
-                    resumeText = result.value ? result.value.trim() : ""
-                } else if (ext.endsWith(".doc")) {
-                    return res.status(400).json({
-                        success: false,
-                        message: "Legacy .doc files are not supported. Please convert to .docx or PDF."
-                    })
-                } else {
-                    return res.status(400).json({
-                        success: false,
-                        message: "Unsupported file format. Please upload a PDF or DOCX file."
-                    })
-                }
-            } catch (fileErr) {
-                console.error("Error parsing resume file:", fileErr)
+            const mime = req.file.mimetype
+            const ext = req.file.originalname?.toLowerCase() || ""
+            if (mime === "application/pdf" || ext.endsWith(".pdf")) {
+                const resumeContent = await (new pdfParse.PDFParse({ data: new Uint8Array(req.file.buffer) })).getText()
+                resumeText = resumeContent.text
+            } else if (mime.includes("wordprocessing") || ext.endsWith(".docx")) {
+                const result = await mammoth.extractRawText({ buffer: req.file.buffer })
+                resumeText = result.value
+            } else if (ext.endsWith(".doc")) {
                 return res.status(400).json({
                     success: false,
-                    message: "Unable to parse resume file. If this is a scanned/image PDF, please paste your details in Self-Description."
+                    message: "Legacy .doc files are not supported. Please convert to .docx or PDF."
+                })
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: "Unsupported file format. Please upload a PDF or DOCX file."
                 })
             }
         }
@@ -59,7 +51,7 @@ async function generateInterviewReportController(req, res) {
         if (!interviewReportByAi) {
             return res.status(500).json({
                 success: false,
-                message: "AI failed to generate a valid interview report. Please verify your inputs and try again."
+                message: "AI failed to generate a valid interview report"
             })
         }
 
@@ -77,10 +69,10 @@ async function generateInterviewReportController(req, res) {
         })
 
     } catch (error) {
-        console.error("Error in generateInterviewReportController:", error)
+        console.log(error)
         res.status(500).json({
             success: false,
-            message: error.message || "Internal server error"
+            message: "Internal server error"
         })
     }
 }
