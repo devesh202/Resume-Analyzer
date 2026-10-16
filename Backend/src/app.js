@@ -6,9 +6,23 @@ const app = express()
 app.set('trust proxy', 1)
 app.use(express.json())
 app.use(cookieParser())
+const allowedOrigins = [
+    "https://resume-analyzer-two-virid.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:4173",
+    "http://127.0.0.1:5173",
+    process.env.CLIENT_URL
+].filter(Boolean)
+
 app.use(cors({
-    origin: "https://resume-analyzer-two-virid.vercel.app",
-    credentials:true
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost")) {
+            return callback(null, true)
+        }
+        return callback(null, true)
+    },
+    credentials: true
 }))
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,

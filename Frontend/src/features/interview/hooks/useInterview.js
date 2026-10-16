@@ -33,7 +33,7 @@ export const useInterview = (id) => {
             setReport(response.data);
             return response;
         }catch(err){
-            return err.response.data;
+            return err.response?.data || { success: false, message: err.response?.data?.message || err.message || "Failed to generate report" };
         }
         finally {
             setLoading(false)
@@ -47,7 +47,7 @@ export const useInterview = (id) => {
             setReports(response.data);
             return response;
         }catch(err){
-            return err.response.data;
+            return err.response?.data || { success: false, message: err.response?.data?.message || err.message || "Failed to fetch reports" };
         }finally {
             setLoading(false)
         }
@@ -59,7 +59,7 @@ export const useInterview = (id) => {
             setReport(response.data);
             return response;
         }catch(err){
-            return err.response.data;
+            return err.response?.data || { success: false, message: err.response?.data?.message || err.message || "Failed to fetch report" };
         }finally {
             setLoading(false)
         }
