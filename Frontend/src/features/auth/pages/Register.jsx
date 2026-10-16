@@ -49,15 +49,15 @@ const Register = () => {
                 <form onSubmit={handleSubmit}>
                     <div className='input-group'>
                         <label htmlFor='username'>Username</label>
-                        <input onChange={(e) => setUsername(e.target.value)} type="text" id='username' placeholder="Enter your name" name='username' />
+                        <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" id='username' placeholder="Enter your name" name='username' />
                     </div>
                     <div className='input-group'>
                         <label htmlFor='email'>Email</label>
-                        <input onChange={(e) => setEmail(e.target.value)} type="email" id='email' placeholder="Enter your email" name='email' />
+                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" id='email' placeholder="Enter your email" name='email' />
                     </div>
                     <div className='input-group'>
                         <label htmlFor='password'>Password</label>
-                        <input onChange={(e) => setPassword(e.target.value)} type="password" id='password' placeholder="Enter your password" name='password' />
+                        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" id='password' placeholder="Enter your password" name='password' />
                     </div>
                     <button className='primary-button button'>Register</button>
                 </form>
